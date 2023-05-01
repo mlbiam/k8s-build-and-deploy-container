@@ -61,6 +61,6 @@ jobs:
           kubectl config set-context kubernetes --cluster=kubernetes --user=cicdproxy
           kubectl config set-credentials cicdproxy --token=$JWT
           kubectl config use-context kubernetes
-          kubectl patch deployment run-service -n myapp -p "{\"spec\":{\"template\":{\"spec\":{\"containers\"[{\"name\":\"pause\",\"image\":\"ghcr.io/${{ env.REPO }}:${{ env.TAG }}\"}]}}}}"
+          kubectl patch deployment run-service -n myapp -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"pause\",\"image\":\"ghcr.io/${{ env.REPO }}:${{ env.TAG }}\"}]}}}}"
 
 
