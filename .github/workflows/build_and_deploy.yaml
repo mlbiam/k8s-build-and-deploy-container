@@ -48,3 +48,19 @@ jobs:
           context: source/
           tags: |
             ghcr.io/${{ env.REPO }}:${{ env.TAG }}
+
+      - name: get oidc token
+        run: |
+          OIDC_TOKEN=$(curl -sLS "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=cicd.tremolo.dev" -H "User-Agent: actions/oidc-client" -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+          JWT=$(echo $OIDC_TOKEN | jq -j '.value')
+          echo "JWT=$JWT" >> $GITHUB_ENV
+
+      - name: patch deployment
+        run: |
+          kubectl config set-cluster kubernetes --server=https://cicd.tremolo.dev
+          kubectl config set-context kubernetes --cluster=kubernetes --user=cicdproxy
+          kubectl config set-credentials cicdproxy --token=$JWT
+          kubectl config use-context kubernetes
+          kubectl patch deployment run-service -n myapp -p "{\"spec\":{\"template\":{\"spec\":{\"containers\"[{\"name\":\"pause\",\"image\":\"ghcr.io/${{ env.REPO }}:${{ env.TAG }}\"}]}}}}"
+
+
