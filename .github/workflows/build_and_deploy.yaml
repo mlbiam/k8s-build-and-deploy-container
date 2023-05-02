@@ -50,14 +50,13 @@ jobs:
             ghcr.io/${{ env.REPO }}:${{ env.TAG }}
 
       - name: get oidc token
-        uses: tremolosecurity/action-generate-oidc-jwt@v0.1
+        uses: tremolosecurity/action-generate-oidc-jwt@v1.0
         with:
           audience: "cicd.tremolo.dev"
           environmentVariableName: "JWT"
 
       - name: patch deployment
         run: |
-          echo "Here's my JWT: $JWT"
           kubectl config set-cluster kubernetes --server=https://cicd.tremolo.dev
           kubectl config set-context kubernetes --cluster=kubernetes --user=cicdproxy
           kubectl config set-credentials cicdproxy --token=$JWT
