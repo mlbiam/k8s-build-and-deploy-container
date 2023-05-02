@@ -49,11 +49,17 @@ jobs:
           tags: |
             ghcr.io/${{ env.REPO }}:${{ env.TAG }}
 
+      # - name: get oidc token
+      #   run: |
+      #     OIDC_TOKEN=$(curl -sLS "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=cicd.tremolo.dev" -H "User-Agent: actions/oidc-client" -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+      #     JWT=$(echo $OIDC_TOKEN | jq -j '.value')
+      #     echo "JWT=$JWT" >> $GITHUB_ENV
+
       - name: get oidc token
-        run: |
-          OIDC_TOKEN=$(curl -sLS "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=cicd.tremolo.dev" -H "User-Agent: actions/oidc-client" -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
-          JWT=$(echo $OIDC_TOKEN | jq -j '.value')
-          echo "JWT=$JWT" >> $GITHUB_ENV
+        uses: tremolosecurity/action-generate-oidc-jwt@v0.1
+        with:
+          audience: "cicd.tremolo.dev"
+          environmentVariableName: "JWT"
 
       - name: patch deployment
         run: |
