@@ -49,12 +49,6 @@ jobs:
           tags: |
             ghcr.io/${{ env.REPO }}:${{ env.TAG }}
 
-      # - name: get oidc token
-      #   run: |
-      #     OIDC_TOKEN=$(curl -sLS "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=cicd.tremolo.dev" -H "User-Agent: actions/oidc-client" -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
-      #     JWT=$(echo $OIDC_TOKEN | jq -j '.value')
-      #     echo "JWT=$JWT" >> $GITHUB_ENV
-
       - name: get oidc token
         uses: tremolosecurity/action-generate-oidc-jwt@v0.1
         with:
@@ -63,6 +57,7 @@ jobs:
 
       - name: patch deployment
         run: |
+          echo "Here's my JWT: $JWT"
           kubectl config set-cluster kubernetes --server=https://cicd.tremolo.dev
           kubectl config set-context kubernetes --cluster=kubernetes --user=cicdproxy
           kubectl config set-credentials cicdproxy --token=$JWT
