@@ -1,7 +1,7 @@
 name: Build and deploy container
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "okta" ]
 permissions:
   id-token: write
   packages: write
@@ -49,18 +49,13 @@ jobs:
           tags: |
             ghcr.io/${{ env.REPO }}:${{ env.TAG }}
 
-      - name: get oidc token
-        uses: tremolosecurity/action-generate-oidc-jwt@v1.0
-        with:
-          audience: "cicd.tremolo.dev"
-          environmentVariableName: "JWT"
+      - name: get kubernetes configuration
+        run: |
+          pip3 install -r .github/workflows/requirements.txt
+          python3 ./github/workflows/load_kubeconfig.py $OKTA_DOMAIN $OKTA_USER $OKTA_PASSWORD $OU_HOST
 
       - name: patch deployment
         run: |
-          kubectl config set-cluster kubernetes --server=https://cicd.tremolo.dev
-          kubectl config set-context kubernetes --cluster=kubernetes --user=cicdproxy
-          kubectl config set-credentials cicdproxy --token=$JWT
-          kubectl config use-context kubernetes
           kubectl patch deployment run-service -n myapp -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"pause\",\"image\":\"ghcr.io/${{ env.REPO }}:${{ env.TAG }}\"}]}}}}"
 
 
