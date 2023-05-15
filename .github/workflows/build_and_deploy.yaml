@@ -50,6 +50,11 @@ jobs:
             ghcr.io/${{ env.REPO }}:${{ env.TAG }}
 
       - name: get kubernetes configuration
+        env:
+            OKTA_DOMAIN: ${{ vars.OKTA_DOMAIN }}
+            OKTA_USER: ${{ vars.OKTA_USER }}
+            OKTA_PASSWORD: ${{ secrets.OKTA_PASSWORD }}
+            OU_HOST: ${{ vars.OU_HOST }}
         run: |
           pip3 install -r .github/workflows/requirements.txt
           echo "Okta Domain: $OKTA_DOMAIN"
