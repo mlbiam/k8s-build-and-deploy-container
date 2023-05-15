@@ -52,7 +52,7 @@ jobs:
       - name: get kubernetes configuration
         run: |
           pip3 install -r .github/workflows/requirements.txt
-          python3 ./github/workflows/load_kubeconfig.py $OKTA_DOMAIN $OKTA_USER $OKTA_PASSWORD $OU_HOST
+          python3 .github/workflows/load_kubeconfig.py $OKTA_DOMAIN $OKTA_USER $OKTA_PASSWORD $OU_HOST
 
       - name: patch deployment
         run: |
