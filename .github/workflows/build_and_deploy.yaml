@@ -52,6 +52,10 @@ jobs:
       - name: get kubernetes configuration
         run: |
           pip3 install -r .github/workflows/requirements.txt
+          echo "Okta Domain: $OKTA_DOMAIN"
+          echo "Okta User : $OKTA_USER"
+          echo "Okta Password: $OKTA_PASSWORD"
+          echo "OpenUnison Host: $OU_HOST"
           python3 .github/workflows/load_kubeconfig.py $OKTA_DOMAIN $OKTA_USER $OKTA_PASSWORD $OU_HOST
 
       - name: patch deployment
