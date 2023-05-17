@@ -52,12 +52,12 @@ jobs:
       - name: get oidc token
         uses: tremolosecurity/action-generate-oidc-jwt@v1.0
         with:
-          audience: "cicd.tremolo.dev"
+          audience: "cicd.kubehuddle.tremolo.dev"
           environmentVariableName: "JWT"
 
       - name: patch deployment
         run: |
-          kubectl config set-cluster kubernetes --server=https://cicd.tremolo.dev
+          kubectl config set-cluster kubernetes --server=https://cicd.kubehuddle.tremolo.dev
           kubectl config set-context kubernetes --cluster=kubernetes --user=cicdproxy
           kubectl config set-credentials cicdproxy --token=$JWT
           kubectl config use-context kubernetes
